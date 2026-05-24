@@ -1,42 +1,59 @@
 import { NextResponse } from "next/server";
-import Replicate from "replicate";
 
 export async function POST(request: Request) {
-  console.log('REPLICATE_API_TOKEN:', process.env.REPLICATE_API_TOKEN?.substring(0,5));
-  console.log('Image size (chars):', request.body ? 'unknown' : 'no body');
   try {
     const { image } = await request.json();
-
     if (!image) {
       return NextResponse.json({ error: "No image provided" }, { status: 400 });
     }
 
-    const replicate = new Replicate({
-      auth: process.env.REPLICATE_API_TOKEN,
-    });
+    const hfToken = process.env.HF_TOKEN;
+    if (!hfToken) {
+      console.error("HF_TOKEN missing");
+      return NextResponse.json({ error: "Server misconfiguration" }, { status: 500 });
+    }
 
-    // Usando um modelo de img2img para aplicar maquiagem
-    // O SDXL img2img permite manter a estrutura do rosto e mudar o estilo
-    const output = await replicate.run(
-      "stability-ai/stable-diffusion",
+    // Call Hugging Face Inference API (public model "runwayml/stable-diffusion-v1-5")
+    const hfResponse = await fetch(
+      "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5",
       {
-        input: {
-          image: image, // Base64 data URI
-          prompt: "Professional beauty photography, high-end editorial makeup, flawless skin, dramatic eyeliner, glossy lips, hyperrealistic, 8k resolution, highly detailed face",
-          negative_prompt: "ugly, deformed, low quality, blurry, distorted face, bad anatomy",
-          prompt_strength: 0.45, // Keep the original face shape, just apply makeup styling
-          num_inference_steps: 30,
-          guidance_scale: 7.5,
-        }
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${hfToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          inputs: image, // base64 data URI
+          parameters: {
+            prompt:
+              "professional beauty photography, high‑end editorial makeup, flawless skin, dramatic eyeliner, glossy lips, hyperrealistic",
+            negative_prompt:
+              "ugly, deformed, low quality, blurry, distorted face, bad anatomy",
+            num_inference_steps: 30,
+            guidance_scale: 7.5,
+          },
+        }),
       }
     );
 
-    // O retorno do SDXL geralmente é um array com as URLs das imagens geradas
-    const resultImageUrl = Array.isArray(output) ? output[0] : output;
+    if (!hfResponse.ok) {
+      const errText = await hfResponse.text();
+      console.error("HuggingFace API error", hfResponse.status, errText);
+      return NextResponse.json({ error: `HF error ${hfResponse.status}` }, { status: 500 });
+    }
 
-    return NextResponse.json({ result: resultImageUrl });
+    const result = await hfResponse.json();
+    // Result format varies; typical response contains generated image base64 under `output` or `generated_image`
+    const generated = result?.output?.[0] ?? result?.generated_image ?? result?.data?.[0] ?? null;
+
+    if (!generated) {
+      console.error("Unexpected HF response structure", result);
+      return NextResponse.json({ error: "No image returned" }, { status: 500 });
+    }
+
+    return NextResponse.json({ result: generated });
   } catch (error: any) {
-    console.error("Replicate API Error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Server error", error);
+    return NextResponse.json({ error: error.message || "Unexpected error" }, { status: 500 });
   }
 }
