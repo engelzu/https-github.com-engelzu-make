@@ -2,6 +2,10 @@ import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  devIndicators: {
+    appIsrStatus: false,
+    buildActivity: false,
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -23,16 +27,27 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.pexels.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'loremflickr.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
   output: 'standalone',
   transpilePackages: ['motion'],
   webpack: (config, {dev}) => {
-    // HMR is disabled in AI Studio via DISABLE_HMR env var.
-    // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
-    if (dev && process.env.DISABLE_HMR === 'true') {
+    if (dev) {
       config.watchOptions = {
-        ignored: /.*/,
+        poll: 1000,
+        aggregateTimeout: 500,
       };
     }
     return config;

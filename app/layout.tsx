@@ -1,4 +1,4 @@
-import type {Metadata} from 'next';
+import type {Metadata, Viewport} from 'next';
 import { Inter, Playfair_Display } from "next/font/google";
 import './globals.css'; // Global styles
 
@@ -12,9 +12,22 @@ const playfair = Playfair_Display({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  themeColor: '#f43f5e',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export const metadata: Metadata = {
-  title: 'Make Todo Dia | Dicas de Maquiagem',
-  description: 'Dicas de maquiagem para todos os dias da semana.',
+  title: 'Estilo | Seu Guia Diário',
+  description: 'Portal diário de dicas de maquiagem, beleza, moda e autocuidado com IA.',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Estilo',
+  },
 };
 
 export default function RootLayout({children}: {children: React.ReactNode}) {
