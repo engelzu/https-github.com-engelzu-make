@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Image from "next/image"; // trigger redeploy timestamp
+import Image from "next/image"; // trigger redeploy timestamp 2026-05-24T04:13:00Z
 import { motion, AnimatePresence } from "motion/react";
 import { belezaData, peleData, cabeloData, saudeData, horoscopoData, achadinhosData } from "@/lib/data";
 import { getHoroscopeForSign } from "@/lib/horoscope-generator";
@@ -103,7 +103,7 @@ function WelcomeScreen({ onEnter }: { onEnter: () => void }) {
           const wData = await weatherRes.json();
           const temp = wData.current_weather.temperature;
           const code = wData.current_weather.weathercode;
-          
+
           let msg = `🌡️ ${Math.round(temp)}°C em ${ipData.cityName}: `;
           if (temp < 20) {
             msg += "Clima frio, aposte em looks quentinhos e hidratação extra na pele!";
@@ -112,7 +112,7 @@ function WelcomeScreen({ onEnter }: { onEnter: () => void }) {
           } else {
             msg += "Clima agradável, perfeito para looks criativos e pele glow.";
           }
-          
+
           // Códigos de chuva no OpenMeteo
           if ([61, 63, 65, 80, 81, 82].includes(code)) {
             msg = `🌧️ ${Math.round(temp)}°C em ${ipData.cityName}: Chovendo! Make à prova d'água e look cozy.`;
@@ -166,7 +166,7 @@ function WelcomeScreen({ onEnter }: { onEnter: () => void }) {
           className="flex flex-col items-center"
         >
           {weatherMsg && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
               className="mb-6 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20 text-white/90 text-sm font-medium"
             >
@@ -175,7 +175,7 @@ function WelcomeScreen({ onEnter }: { onEnter: () => void }) {
           )}
 
           <div className="relative inline-block mb-4">
-            <h1 className="font-serif text-5xl md:text-7xl font-bold tracking-widest text-white uppercase" 
+            <h1 className="font-serif text-5xl md:text-7xl font-bold tracking-widest text-white uppercase"
               style={{ textShadow: "0 0 30px rgba(244, 63, 94, 0.6), 0 0 60px rgba(251, 113, 133, 0.4)" }}>
               ESTILO
             </h1>
@@ -223,7 +223,7 @@ export default function Home() {
   // --- Mercado Pago & Trial State ---
   const [isTrialBlocked, setIsTrialBlocked] = useState<boolean>(false);
   const [showTrialNotice, setShowTrialNotice] = useState<boolean>(false);
-  const [activationCode, setActivationCode] = useState<string>( "");
+  const [activationCode, setActivationCode] = useState<string>("");
   const [activationError, setActivationError] = useState<string>("");
   const MERCADO_PAGO_LINK = "https://mpago.la/11s8BAp";
 
@@ -233,7 +233,7 @@ export default function Home() {
         localStorage.setItem("make_app_paid", "true");
         setIsTrialBlocked(false);
         setActivationError("");
-      } catch (e) {}
+      } catch (e) { }
     } else {
       setActivationError("Código inválido. Por favor, tente novamente.");
     }
@@ -247,18 +247,18 @@ export default function Home() {
     const today = new Date().getDay();
     setActiveDayIdx(today);
     setRealDayIdx(today);
-    
+
     // Check local storage for glow points and favorites
     try {
       const savedFavs = localStorage.getItem('makeFavs');
       if (savedFavs) setFavorites(JSON.parse(savedFavs));
-      
+
       const savedGlow = localStorage.getItem('glowPoints');
       if (savedGlow) setGlowPoints(parseInt(savedGlow));
-      
+
       const savedPalette = localStorage.getItem('userPalette');
       if (savedPalette) setUserPalette(savedPalette);
-    } catch (e) {}
+    } catch (e) { }
 
     // Controle do período de testes de 24h e pagamento
     try {
@@ -276,7 +276,7 @@ export default function Home() {
           }
         }
       }
-    } catch (e) {}
+    } catch (e) { }
 
     // Registra listener para deep link do Capacitor (se estiver rodando no celular)
     if (typeof window !== "undefined") {
@@ -289,7 +289,7 @@ export default function Home() {
             window.location.reload();
           }
         });
-      } catch (e) {}
+      } catch (e) { }
     }
 
     // Set Day/Night mode
@@ -312,14 +312,14 @@ export default function Home() {
         if (!dismissed && !isPaid) {
           setShowTrialNotice(true);
         }
-      } catch (e) {}
+      } catch (e) { }
     }
   }, [hasEntered]);
 
   const addGlowPoints = (points: number) => {
     setGlowPoints(prev => {
       const newPoints = prev + points;
-      try { localStorage.setItem('glowPoints', newPoints.toString()); } catch(e) {}
+      try { localStorage.setItem('glowPoints', newPoints.toString()); } catch (e) { }
       return newPoints;
     });
   };
@@ -333,7 +333,7 @@ export default function Home() {
         setRealDayIdx(idx);
       }
     }, 0);
-    
+
     const storedFavs = localStorage.getItem("dailyStyleFavoritesV2");
     if (storedFavs) {
       try {
@@ -391,11 +391,11 @@ export default function Home() {
       stopVoice();
       return;
     }
-    
+
     setIsPlaying(true);
     addGlowPoints(10); // Gamification
     isPlayingRef.current = true;
-    
+
     // Interrompe qualquer áudio travado e zera timeouts
     window.speechSynthesis.cancel();
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -403,12 +403,12 @@ export default function Home() {
     // Filtra vozes brasileiras
     const voices = window.speechSynthesis.getVoices();
     const ptVoices = voices.filter(v => v.lang.includes("pt-BR") || v.lang.includes("pt_BR"));
-    
+
     // Tenta forçar as vozes "Neurais/Naturais" que são perfeitas
     let bestVoice = ptVoices.find(v => v.name.includes("Francisca") && v.name.includes("Online")); // Edge
     if (!bestVoice) bestVoice = ptVoices.find(v => v.name.includes("Online") || v.name.includes("Natural") || v.name.includes("Google")); // Chrome/Edge Neural
     if (!bestVoice) bestVoice = ptVoices.find(v => v.name.includes("Luciana")); // Fallback Windows
-    
+
     let index = 0;
 
     const speakNext = () => {
@@ -422,15 +422,15 @@ export default function Home() {
       if (index >= textList.length) {
         index = 0;
       }
-      
+
       setCurrentSpeakingIndex(index);
-      
+
       const utterance = new SpeechSynthesisUtterance(textList[index]);
       utteranceRef.current = utterance; // Previne que o Garbage Collector mate o áudio no Chrome
       utterance.lang = "pt-BR";
-      utterance.rate = 1.25; 
-      utterance.pitch = 1.1; 
-      
+      utterance.rate = 1.25;
+      utterance.pitch = 1.1;
+
       if (bestVoice) {
         utterance.voice = bestVoice;
       }
@@ -439,12 +439,12 @@ export default function Home() {
         index++;
         // Pausa maior (2s) antes de recomeçar o loop, ou 800ms entre os passos normais
         const delay = index >= textList.length ? 2500 : 800;
-        
+
         timeoutRef.current = setTimeout(() => {
           speakNext();
         }, delay);
       };
-      
+
       utterance.onerror = (e) => {
         // Ignorar erros normais de interrupção quando o usuário clica em "Parar"
         if (e.error === "canceled" || e.error === "interrupted") {
@@ -630,7 +630,7 @@ export default function Home() {
       {/* Sidebar Overlay */}
       <AnimatePresence>
         {isMenuOpen && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 bg-stone-900/40 z-[60] backdrop-blur-sm"
             onClick={() => setIsMenuOpen(false)}
@@ -641,7 +641,7 @@ export default function Home() {
       {/* Sidebar Menu */}
       <AnimatePresence>
         {isMenuOpen && (
-          <motion.div 
+          <motion.div
             initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
             className="fixed top-0 left-0 bottom-0 w-72 bg-white shadow-2xl z-[70] flex flex-col"
@@ -656,7 +656,7 @@ export default function Home() {
               </button>
             </div>
             <div className="flex-1 p-4 flex flex-col gap-2">
-              <button 
+              <button
                 onClick={() => { setHasEntered(false); setIsMenuOpen(false); }}
                 className="group w-full flex items-center gap-4 px-4 py-3 mx-2 rounded-2xl transition-all duration-300 hover:bg-stone-50 active:bg-stone-100"
                 style={{ width: 'calc(100% - 16px)' }}
@@ -666,7 +666,7 @@ export default function Home() {
                 </div>
                 <span className="font-medium transition-colors duration-300 text-stone-500 group-hover:text-stone-800">Tela Inicial</span>
               </button>
-              
+
               <div className="h-px bg-stone-100 my-2 mx-2" />
 
               {(Object.keys(allCategories) as CategoryId[]).map((id) => {
@@ -704,14 +704,14 @@ export default function Home() {
             <p className={`font-sans text-xs ${isNight ? "text-stone-400" : "text-stone-500"}`}>Seu guia diário</p>
           </div>
         </div>
-        
+
         {/* Glow Points Badge */}
         <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border ${isNight ? "bg-stone-900/50 border-stone-800" : "bg-rose-50/50 border-rose-100"}`}>
           <Sparkles className="w-4 h-4 text-rose-400" />
           <span className={`text-xs font-bold ${isNight ? "text-rose-300" : "text-rose-600"}`}>{glowPoints} Glow</span>
         </div>
         {activeTab !== "favoritos" && (
-          <button 
+          <button
             onClick={() => toggleFavorite(uniqueId)}
             className={`p-3 rounded-full transition-all active:scale-95 shadow-sm border ${isFavorite ? "bg-rose-50 border-rose-200 text-rose-500" : "bg-white border-stone-200 text-stone-400 hover:text-rose-400"}`}
           >
@@ -722,7 +722,7 @@ export default function Home() {
 
       {/* Main Content Area */}
       <main className="max-w-4xl mx-auto px-4 mt-6 relative">
-        
+
         {activeTab === "favoritos" ? (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
             <h2 className="font-serif text-3xl font-bold text-stone-900 mb-6 flex items-center gap-2">
@@ -732,7 +732,7 @@ export default function Home() {
               <div className="text-center py-20 bg-white rounded-3xl border border-stone-100 shadow-sm">
                 <Heart className="w-12 h-12 text-stone-200 mx-auto mb-4" />
                 <p className="text-stone-500">Você ainda não salvou nenhum estilo.</p>
-                <button 
+                <button
                   onClick={() => setActiveTab("tab1")}
                   className="mt-4 text-rose-500 font-medium hover:underline"
                 >
@@ -753,7 +753,7 @@ export default function Home() {
                       <div>
                         <p className="text-[10px] font-bold text-rose-500 uppercase tracking-wider mb-1">{allCategories[cat as CategoryId].name} • {favItem.day}</p>
                         <h3 className="font-serif text-base text-stone-900 leading-tight mb-2">{favItem.theme}</h3>
-                        <button 
+                        <button
                           onClick={() => {
                             setActiveCategory(cat as CategoryId);
                             setActiveDayIdx(allCategories[cat as CategoryId].data.findIndex(d => d.id === favItem.id));
@@ -774,32 +774,32 @@ export default function Home() {
           <>
             {/* Days Navigator */}
             <div className="w-full max-w-sm mx-auto mb-8 px-4">
-                <div className={`flex overflow-x-auto hide-scrollbar gap-1 p-1 rounded-full shadow-sm border mx-auto w-full backdrop-blur-md ${isNight ? "bg-stone-900/50 border-stone-800" : "bg-stone-50/80 border-stone-200/50"}`}>
-                  {activeDataList.map((item: any, index: number) => {
-                    const isActive = activeDayIdx === index;
-                    const isToday = realDayIdx === index;
-                    return (
-                      <button
-                        key={item.id}
-                        ref={isActive ? activeDayRef : null}
-                        onClick={() => setActiveDayIdx(index)}
-                        className={`shrink-0 flex flex-col items-center justify-center px-4 py-1.5 rounded-full text-xs font-medium transition-all duration-300
-                          ${isActive 
-                            ? (isNight ? "bg-stone-800 text-rose-400 shadow-md border border-stone-700" : "bg-white text-rose-600 shadow-md border border-stone-100") 
-                            : (isNight ? "text-stone-400 hover:bg-stone-800/50" : "text-stone-500 hover:bg-stone-200/50")}
+              <div className={`flex overflow-x-auto hide-scrollbar gap-1 p-1 rounded-full shadow-sm border mx-auto w-full backdrop-blur-md ${isNight ? "bg-stone-900/50 border-stone-800" : "bg-stone-50/80 border-stone-200/50"}`}>
+                {activeDataList.map((item: any, index: number) => {
+                  const isActive = activeDayIdx === index;
+                  const isToday = realDayIdx === index;
+                  return (
+                    <button
+                      key={item.id}
+                      ref={isActive ? activeDayRef : null}
+                      onClick={() => setActiveDayIdx(index)}
+                      className={`shrink-0 flex flex-col items-center justify-center px-4 py-1.5 rounded-full text-xs font-medium transition-all duration-300
+                          ${isActive
+                          ? (isNight ? "bg-stone-800 text-rose-400 shadow-md border border-stone-700" : "bg-white text-rose-600 shadow-md border border-stone-100")
+                          : (isNight ? "text-stone-400 hover:bg-stone-800/50" : "text-stone-500 hover:bg-stone-200/50")}
                         `}
-                      >
-                        <span>{item.day}</span>
-                        {isToday && (
-                          <span className={`text-[8px] leading-tight mt-0.5 ${isActive ? "text-rose-500" : "text-stone-400"} font-bold tracking-widest uppercase`}>
-                            Hoje
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
+                    >
+                      <span>{item.day}</span>
+                      {isToday && (
+                        <span className={`text-[8px] leading-tight mt-0.5 ${isActive ? "text-rose-500" : "text-stone-400"} font-bold tracking-widest uppercase`}>
+                          Hoje
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
+            </div>
 
             <AnimatePresence mode="wait">
               <motion.div
@@ -812,7 +812,7 @@ export default function Home() {
               >
                 {/* Hero / Media Section */}
                 <div className="md:col-span-5 flex flex-col gap-4">
-                  
+
                   {/* Hero Image - ALWAYS RENDERED now! */}
                   <div className="relative aspect-[4/5] w-full rounded-3xl overflow-hidden shadow-lg border-4 border-white bg-stone-950">
                     {activeCategory === "horoscopo" ? (
@@ -823,7 +823,7 @@ export default function Home() {
                           beleza: {
                             tab1: ["https://images.unsplash.com/photo-1596462502278-27bfdc403348?q=80&w=800&auto=format&fit=crop", "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=800&auto=format&fit=crop"],
                             tab2: [
-                              "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=800&auto=format&fit=crop", 
+                              "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=800&auto=format&fit=crop",
                               "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=800&auto=format&fit=crop",
                               "https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?q=80&w=800&auto=format&fit=crop",
                               "https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?q=80&w=800&auto=format&fit=crop",
@@ -855,7 +855,7 @@ export default function Home() {
                             tab3: ["https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=800&auto=format&fit=crop"]
                           }
                         };
-                        
+
                         let displayImage = activeData.image;
                         if (dynamicTabImages[activeCategory] && dynamicTabImages[activeCategory][activeTab]) {
                           const pool = dynamicTabImages[activeCategory][activeTab];
@@ -869,9 +869,9 @@ export default function Home() {
                     <div className="absolute bottom-4 left-4 right-4 text-white">
                       <span className="bg-rose-500 text-white text-[10px] font-bold px-2 py-1 rounded-sm uppercase tracking-wider mb-2 inline-block">{allCategories[activeCategory].name}</span>
                       <h2 className="font-serif text-3xl mb-1">
-                        {activeCategory === "beleza" && activeTab === "tab2" ? "Look do Dia" : 
-                         activeCategory === "beleza" && activeTab === "tab3" ? "Unhas da Semana" :
-                         activeData.theme}
+                        {activeCategory === "beleza" && activeTab === "tab2" ? "Look do Dia" :
+                          activeCategory === "beleza" && activeTab === "tab3" ? "Unhas da Semana" :
+                            activeData.theme}
                       </h2>
                     </div>
                   </div>
@@ -913,16 +913,16 @@ export default function Home() {
                           const earth = ["Touro", "Virgem", "Capricórnio"];
                           const air = ["Gêmeos", "Libra", "Aquário"];
                           const water = ["Câncer", "Escorpião", "Peixes"];
-                          
+
                           let src = "https://images.unsplash.com/photo-1532968961962-8a0cb3a2d4f5?q=80&w=800&auto=format&fit=crop";
                           if (fire.includes(selectedSign)) src = "https://images.unsplash.com/photo-1614729939124-032f0b56c9ce?q=80&w=800&auto=format&fit=crop";
                           if (earth.includes(selectedSign)) src = "https://images.unsplash.com/photo-1532968961962-8a0cb3a2d4f5?q=80&w=800&auto=format&fit=crop";
                           if (air.includes(selectedSign)) src = "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=800&auto=format&fit=crop";
                           if (water.includes(selectedSign)) src = "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=800&auto=format&fit=crop";
-                          
+
                           const zodiacSymbols: Record<string, string> = {
-                            "Áries": "\u2648\uFE0E", "Touro": "\u2649\uFE0E", "Gêmeos": "\u264A\uFE0E", "Câncer": "\u264B\uFE0E", 
-                            "Leão": "\u264C\uFE0E", "Virgem": "\u264D\uFE0E", "Libra": "\u264E\uFE0E", "Escorpião": "\u264F\uFE0E", 
+                            "Áries": "\u2648\uFE0E", "Touro": "\u2649\uFE0E", "Gêmeos": "\u264A\uFE0E", "Câncer": "\u264B\uFE0E",
+                            "Leão": "\u264C\uFE0E", "Virgem": "\u264D\uFE0E", "Libra": "\u264E\uFE0E", "Escorpião": "\u264F\uFE0E",
                             "Sagitário": "\u2650\uFE0E", "Capricórnio": "\u2651\uFE0E", "Aquário": "\u2652\uFE0E", "Peixes": "\u2653\uFE0E"
                           };
 
@@ -954,7 +954,7 @@ export default function Home() {
                           if (activeTab === "tab2") return <p className="font-medium text-rose-500">Receita: {activeData.alimentacao.recipe}</p>;
                           if (activeTab === "tab3") return <p className="font-medium text-rose-500">Dica: Um ambiente tranquilo é essencial.</p>;
                         }
-                        
+
                         if (!items || items.length === 0) return <p className="text-stone-500 text-sm">Nenhum produto extra necessário.</p>;
                         return (
                           <>
@@ -973,36 +973,35 @@ export default function Home() {
                 <div className="md:col-span-7 bg-white rounded-3xl p-6 md:p-8 shadow-sm ring-1 ring-stone-100">
                   <div className="mb-8">
                     <h3 className="font-serif text-2xl font-bold text-stone-900 mb-3">
-                      {activeCategory === "beleza" && activeTab === "tab2" ? "Look do Dia" : 
-                       activeCategory === "beleza" && activeTab === "tab3" ? "Unhas da Semana" :
-                       activeData.theme}
+                      {activeCategory === "beleza" && activeTab === "tab2" ? "Look do Dia" :
+                        activeCategory === "beleza" && activeTab === "tab3" ? "Unhas da Semana" :
+                          activeData.theme}
                     </h3>
                     <p className="text-stone-600 leading-relaxed text-sm md:text-base">
-                      {activeCategory === "beleza" && activeTab === "tab2" 
-                        ? "Sugerimos a paleta de cores perfeita para a sua roupa, feita para harmonizar com a maquiagem escolhida para hoje." 
+                      {activeCategory === "beleza" && activeTab === "tab2"
+                        ? "Sugerimos a paleta de cores perfeita para a sua roupa, feita para harmonizar com a maquiagem escolhida para hoje."
                         : activeCategory === "beleza" && activeTab === "tab3"
-                        ? "Confira a paleta de cores ideal para suas unhas, complementando todo o seu visual."
-                        : activeData.description}
+                          ? "Confira a paleta de cores ideal para suas unhas, complementando todo o seu visual."
+                          : activeData.description}
                     </p>
-                    
+
                     {activeCategory === "horoscopo" && (
                       <div className="mt-6 flex gap-2 overflow-x-auto hide-scrollbar pb-2 pt-1">
                         {["Áries", "Touro", "Gêmeos", "Câncer", "Leão", "Virgem", "Libra", "Escorpião", "Sagitário", "Capricórnio", "Aquário", "Peixes"].map(sign => (
                           <button
                             key={sign}
                             onClick={() => setSelectedSign(sign)}
-                            className={`px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium transition-all ${
-                              selectedSign === sign
+                            className={`px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium transition-all ${selectedSign === sign
                                 ? "bg-rose-500 text-white shadow-md shadow-rose-200"
                                 : "bg-stone-100 text-stone-600 hover:bg-stone-200"
-                            }`}
+                              }`}
                           >
                             {sign}
                           </button>
                         ))}
                       </div>
                     )}
-                    
+
                     {activeCategory === "beleza" && activeTab === "tab1" && (
                       <div className={`mt-8 p-6 rounded-3xl border shadow-sm flex flex-col sm:flex-row items-center gap-4 justify-between ${isNight ? "bg-rose-900/20 border-rose-500/20" : "bg-rose-50 border-rose-100"}`}>
                         <div>
@@ -1013,7 +1012,7 @@ export default function Home() {
                             {userPalette ? `Sua paleta é: ${userPalette}` : "Descubra quais cores harmonizam perfeitamente com você!"}
                           </p>
                         </div>
-                        <button 
+                        <button
                           onClick={() => setIsQuizOpen(true)}
                           className="w-full sm:w-auto px-6 py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-full font-bold uppercase tracking-wider text-xs transition-colors shadow-lg shadow-rose-500/30 whitespace-nowrap"
                         >
@@ -1053,8 +1052,8 @@ export default function Home() {
                         <div className="grid grid-cols-4 sm:grid-cols-5 gap-y-8 gap-x-4">
                           {activeData.nails.palette.map((color: string, idx: number) => (
                             <div key={idx} className="flex flex-col items-center group cursor-pointer" title={color}>
-                              <div 
-                                className="relative w-12 h-[5.5rem] rounded-t-full rounded-b-xl shadow-[inset_-5px_-3px_12px_rgba(0,0,0,0.3),_inset_4px_4px_10px_rgba(255,255,255,0.5),_0_6px_10px_rgba(0,0,0,0.15)] group-hover:-translate-y-2 group-hover:scale-105 transition-all duration-300 overflow-hidden" 
+                              <div
+                                className="relative w-12 h-[5.5rem] rounded-t-full rounded-b-xl shadow-[inset_-5px_-3px_12px_rgba(0,0,0,0.3),_inset_4px_4px_10px_rgba(255,255,255,0.5),_0_6px_10px_rgba(0,0,0,0.15)] group-hover:-translate-y-2 group-hover:scale-105 transition-all duration-300 overflow-hidden"
                                 style={{ backgroundColor: color }}
                               >
                                 <div className="absolute top-2 bottom-3 left-2 w-[0.35rem] rounded-full bg-gradient-to-b from-white/90 via-white/40 to-transparent blur-[0.5px] rotate-[1deg]"></div>
@@ -1066,41 +1065,41 @@ export default function Home() {
                         </div>
                       </div>
                     </div>
-                    ) : activeCategory === "achadinhos" ? (
-                      <div className="flex flex-col gap-8">
-                          <h3 className={`font-serif text-xl font-bold flex items-center gap-2 ${isNight ? "text-white" : "text-stone-900"}`}>
-                            <ShoppingBag className="w-5 h-5 text-rose-500" /> Comparativo de Produtos
-                          </h3>
-                          <div className="flex flex-col md:flex-row gap-6">
-                          {/* High End */}
-                          <div className={`flex-1 p-5 rounded-3xl border shadow-sm relative overflow-hidden ${isNight ? "bg-stone-900 border-stone-800" : "bg-white border-stone-100"}`}>
-                            <div className="absolute top-0 right-0 bg-stone-900 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase z-10 border-b border-l border-stone-700">Luxo</div>
-                            <div className="w-full aspect-[4/3] relative rounded-2xl overflow-hidden mb-4 bg-stone-50">
-                              <Image src={activeData.highEnd.image} alt="High End" fill className="object-cover" referrerPolicy="no-referrer" />
-                            </div>
-                            <h4 className={`font-serif text-lg leading-tight ${isNight ? "text-stone-100" : "text-stone-900"}`}>{activeData.highEnd.name}</h4>
-                            <p className={`text-xs uppercase tracking-wider mb-2 ${isNight ? "text-stone-400" : "text-stone-500"}`}>{activeData.highEnd.brand}</p>
+                  ) : activeCategory === "achadinhos" ? (
+                    <div className="flex flex-col gap-8">
+                      <h3 className={`font-serif text-xl font-bold flex items-center gap-2 ${isNight ? "text-white" : "text-stone-900"}`}>
+                        <ShoppingBag className="w-5 h-5 text-rose-500" /> Comparativo de Produtos
+                      </h3>
+                      <div className="flex flex-col md:flex-row gap-6">
+                        {/* High End */}
+                        <div className={`flex-1 p-5 rounded-3xl border shadow-sm relative overflow-hidden ${isNight ? "bg-stone-900 border-stone-800" : "bg-white border-stone-100"}`}>
+                          <div className="absolute top-0 right-0 bg-stone-900 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase z-10 border-b border-l border-stone-700">Luxo</div>
+                          <div className="w-full aspect-[4/3] relative rounded-2xl overflow-hidden mb-4 bg-stone-50">
+                            <Image src={activeData.highEnd.image} alt="High End" fill className="object-cover" referrerPolicy="no-referrer" />
                           </div>
-                          {/* VS badge */}
-                          <div className="hidden md:flex items-center justify-center -mx-4 z-10">
-                            <div className="bg-rose-500 text-white font-bold w-10 h-10 rounded-full flex items-center justify-center shadow-lg ring-4 ring-stone-50">VS</div>
-                          </div>
-                          {/* Drugstore */}
-                          <div className={`flex-1 p-5 rounded-3xl border shadow-sm relative overflow-hidden ${isNight ? "bg-stone-800 border-rose-900/30" : "bg-rose-50 border-rose-100"}`}>
-                            <div className="absolute top-0 right-0 bg-rose-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase z-10">Achadinho</div>
-                            <div className="w-full aspect-[4/3] relative rounded-2xl overflow-hidden mb-4 bg-white">
-                              <Image src={activeData.drugstore.image} alt="Drugstore" fill className="object-cover" referrerPolicy="no-referrer" />
-                            </div>
-                            <h4 className={`font-serif text-lg leading-tight ${isNight ? "text-rose-100" : "text-rose-950"}`}>{activeData.drugstore.name}</h4>
-                            <p className={`text-xs uppercase tracking-wider mb-2 ${isNight ? "text-rose-400" : "text-rose-600"}`}>{activeData.drugstore.brand}</p>
-                          </div>
+                          <h4 className={`font-serif text-lg leading-tight ${isNight ? "text-stone-100" : "text-stone-900"}`}>{activeData.highEnd.name}</h4>
+                          <p className={`text-xs uppercase tracking-wider mb-2 ${isNight ? "text-stone-400" : "text-stone-500"}`}>{activeData.highEnd.brand}</p>
                         </div>
-                        <p className={`text-center italic p-4 rounded-xl border shadow-sm ${isNight ? "bg-stone-900 border-stone-800 text-stone-300" : "bg-white border-stone-100 text-stone-600"}`}>
-                          "{activeData.description}"
-                        </p>
+                        {/* VS badge */}
+                        <div className="hidden md:flex items-center justify-center -mx-4 z-10">
+                          <div className="bg-rose-500 text-white font-bold w-10 h-10 rounded-full flex items-center justify-center shadow-lg ring-4 ring-stone-50">VS</div>
+                        </div>
+                        {/* Drugstore */}
+                        <div className={`flex-1 p-5 rounded-3xl border shadow-sm relative overflow-hidden ${isNight ? "bg-stone-800 border-rose-900/30" : "bg-rose-50 border-rose-100"}`}>
+                          <div className="absolute top-0 right-0 bg-rose-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase z-10">Achadinho</div>
+                          <div className="w-full aspect-[4/3] relative rounded-2xl overflow-hidden mb-4 bg-white">
+                            <Image src={activeData.drugstore.image} alt="Drugstore" fill className="object-cover" referrerPolicy="no-referrer" />
+                          </div>
+                          <h4 className={`font-serif text-lg leading-tight ${isNight ? "text-rose-100" : "text-rose-950"}`}>{activeData.drugstore.name}</h4>
+                          <p className={`text-xs uppercase tracking-wider mb-2 ${isNight ? "text-rose-400" : "text-rose-600"}`}>{activeData.drugstore.brand}</p>
+                        </div>
                       </div>
-                    ) : (
-                      <div>
+                      <p className={`text-center italic p-4 rounded-xl border shadow-sm ${isNight ? "bg-stone-900 border-stone-800 text-stone-300" : "bg-white border-stone-100 text-stone-600"}`}>
+                        "{activeData.description}"
+                      </p>
+                    </div>
+                  ) : (
+                    <div>
                       {(() => {
                         let steps: string[] = [];
                         if (activeCategory === "beleza") steps = activeData.steps;
@@ -1117,7 +1116,7 @@ export default function Home() {
                           if (activeTab === "tab2") steps = [dynamicHoroscope.cor];
                           if (activeTab === "tab3") steps = [dynamicHoroscope.look];
                         }
-                        
+
                         return (
                           <>
                             <div className="flex items-center justify-between mb-6">
@@ -1126,7 +1125,7 @@ export default function Home() {
                                 {activeCategory === "horoscopo" ? "Sua Previsão" : "Passo a Passo"}
                               </h3>
                               {steps && steps.length > 0 && (
-                                <button 
+                                <button
                                   onClick={() => playVoice(steps)}
                                   className={`px-4 py-2 rounded-full transition-colors flex items-center gap-2 text-xs font-bold uppercase tracking-wider ${isPlaying ? "bg-rose-500 text-white shadow-md shadow-rose-200" : "bg-rose-50 text-rose-600 hover:bg-rose-100"}`}
                                 >
@@ -1180,9 +1179,9 @@ export default function Home() {
           const TabIcon = tab.icon;
           const isActive = activeTab === tab.id;
           return (
-            <button 
+            <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)} 
+              onClick={() => setActiveTab(tab.id)}
               className={`flex flex-col items-center gap-1 transition-colors ${isActive ? "text-rose-500" : "text-stone-400 hover:text-stone-600"}`}
             >
               <TabIcon className={`w-6 h-6 ${isActive && tab.id === "favoritos" ? "fill-rose-500" : ""}`} />
@@ -1194,12 +1193,12 @@ export default function Home() {
 
       <AnimatePresence>
         {isQuizOpen && (
-          <ColorQuiz 
-            onClose={() => setIsQuizOpen(false)} 
+          <ColorQuiz
+            onClose={() => setIsQuizOpen(false)}
             onComplete={(res) => {
               setUserPalette(res);
-              try { localStorage.setItem("userPalette", res); } catch(e) {}
-            }} 
+              try { localStorage.setItem("userPalette", res); } catch (e) { }
+            }}
           />
         )}
       </AnimatePresence>
@@ -1220,11 +1219,11 @@ export default function Home() {
               <h3 className="font-serif text-2xl font-bold mb-3 tracking-tight text-white">
                 Seu Teste Gratuito Começou!
               </h3>
-              
+
               <p className="text-stone-300 text-sm leading-relaxed mb-4">
                 Seja muito bem-vinda ao <strong className="text-white">Estilo</strong>! Você tem <span className="text-rose-400 font-bold">24 horas de acesso gratuito e ilimitado</span> para explorar todas as nossas dicas diárias de beleza, skincare, looks exclusivos e horóscopo.
               </p>
-              
+
               <p className="text-stone-455 text-stone-400 text-xs leading-relaxed mb-8">
                 Após esse período de teste, para continuar recebendo suas atualizações diárias e o audioguia, será cobrada uma taxa única de apenas <strong className="text-white">R$ 7,00</strong>. Não há assinaturas mensais ou cobranças adicionais!
               </p>
@@ -1233,7 +1232,7 @@ export default function Home() {
                 onClick={() => {
                   try {
                     localStorage.setItem('make_trial_notice_dismissed', 'true');
-                  } catch (e) {}
+                  } catch (e) { }
                   setShowTrialNotice(false);
                 }}
                 className="w-full bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3.5 rounded-2xl shadow-lg active:scale-95 transition-all text-center text-sm"
@@ -1245,7 +1244,7 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      <style dangerouslySetInnerHTML={{__html: `.hide-scrollbar::-webkit-scrollbar { display: none; } .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }`}} />
+      <style dangerouslySetInnerHTML={{ __html: `.hide-scrollbar::-webkit-scrollbar { display: none; } .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }` }} />
     </div>
   );
 }
