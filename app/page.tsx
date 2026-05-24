@@ -224,7 +224,7 @@ export default function Home() {
   const [isTrialBlocked, setIsTrialBlocked] = useState<boolean>(false);
   const [activationCode, setActivationCode] = useState<string>( "");
   const [activationError, setActivationError] = useState<string>("");
-  const MERCADO_PAGO_LINK = "https://mpago.la/2i1zT6Q";
+  const MERCADO_PAGO_LINK = "https://mpago.la/11s8BAp";
 
   const handleUnlockCode = () => {
     if (activationCode.trim().toUpperCase() === "ESTILO7") {
