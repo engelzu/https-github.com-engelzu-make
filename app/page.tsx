@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
+import Image from "next/image"; // trigger redeploy timestamp
 import { motion, AnimatePresence } from "motion/react";
 import { belezaData, peleData, cabeloData, saudeData, horoscopoData, achadinhosData } from "@/lib/data";
 import { getHoroscopeForSign } from "@/lib/horoscope-generator";
