@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     // Usando um modelo de img2img para aplicar maquiagem
     // O SDXL img2img permite manter a estrutura do rosto e mudar o estilo
     const output = await replicate.run(
-      "stability-ai/stable-diffusion:fdc5f2b1e5c50db6c17a33f0e3e6b0e5cfa828cde1560e8e2d6c5b4c",
+      "stability-ai/stable-diffusion",
       {
         input: {
           image: image, // Base64 data URI
