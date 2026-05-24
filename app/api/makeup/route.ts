@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import Replicate from "replicate";
 
 export async function POST(request: Request) {
+  console.log('REPLICATE_API_TOKEN:', process.env.REPLICATE_API_TOKEN?.substring(0,5));
+  console.log('Image size (chars):', request.body ? 'unknown' : 'no body');
   try {
     const { image } = await request.json();
 
