@@ -271,32 +271,6 @@ export default function Home() {
     }
   };
 
-  const analyzeFaceWithAI = async () => {
-    if (aiCredits <= 0 || !capturedImage) return;
-    setIsAnalyzing(true);
-
-    try {
-      const response = await fetch("/api/makeup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image: capturedImage }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to generate image");
-      }
-
-      setAiCredits(prev => prev - 1);
-      setAiResultImage(data.result);
-    } catch (err) {
-      console.error(err);
-      alert("Houve um erro ao processar a imagem com a IA. Tente novamente.");
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
   // -------------------------
 
   const [isNight, setIsNight] = useState<boolean>(true);
@@ -773,9 +747,7 @@ export default function Home() {
                             <div className={`w-full aspect-[3/4] rounded-3xl relative overflow-hidden shadow-lg border ${isNight ? "border-stone-800" : "border-stone-200"}`}>
                               <Image src={capturedImage} alt="Captured" fill className="object-cover" />
                             </div>
-                            <button onClick={analyzeFaceWithAI} className="w-full bg-rose-500 text-white font-bold py-4 rounded-2xl shadow-lg shadow-rose-500/30 hover:bg-rose-600 active:scale-95 transition-all flex items-center justify-center gap-2">
-                              <Sparkles className="w-5 h-5" /> Gerar Maquiagem (1 Teste)
-                            </button>
+
                             <button onClick={() => setCapturedImage(null)} className={`w-full py-4 rounded-2xl font-bold active:scale-95 transition-all ${isNight ? "bg-stone-800 text-stone-300 hover:bg-stone-700" : "bg-stone-200 text-stone-600 hover:bg-stone-300"}`}>
                               Tirar Novamente
                             </button>
