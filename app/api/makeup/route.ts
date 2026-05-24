@@ -38,6 +38,10 @@ export async function POST(request: Request) {
 
     if (!hfResponse.ok) {
       const errText = await hfResponse.text();
+      console.error("HF error response:", errText);
+      return NextResponse.json({ error: `HF error ${hfResponse.status}` }, { status: 500 });
+    }
+      const errText = await hfResponse.text();
       console.error("HuggingFace API error", hfResponse.status, errText);
       return NextResponse.json({ error: `HF error ${hfResponse.status}` }, { status: 500 });
     }
