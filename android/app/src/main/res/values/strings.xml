@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Estilo</string>
+    <string name="title_activity_main">Estilo</string>
+    <string name="package_name">br.com.estilo.app</string>
+    <string name="custom_url_scheme">br.com.estilo.app</string>
+</resources>

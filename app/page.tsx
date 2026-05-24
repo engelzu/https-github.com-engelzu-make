@@ -220,6 +220,23 @@ export default function Home() {
   const [currentSpeakingIndex, setCurrentSpeakingIndex] = useState<number>(-1);
   const [glowPoints, setGlowPoints] = useState<number>(0);
 
+  // --- Mercado Pago & Trial State ---
+  const [isTrialBlocked, setIsTrialBlocked] = useState<boolean>(false);
+  const [activationCode, setActivationCode] = useState<string>( "");
+  const [activationError, setActivationError] = useState<string>("");
+  const MERCADO_PAGO_LINK = "https://mpago.la/2i1zT6Q";
+
+  const handleUnlockCode = () => {
+    if (activationCode.trim().toUpperCase() === "ESTILO7") {
+      try {
+        localStorage.setItem("make_app_paid", "true");
+        setIsTrialBlocked(false);
+        setActivationError("");
+      } catch (e) {}
+    } else {
+      setActivationError("Código inválido. Por favor, tente novamente.");
+    }
+  };
 
   const [isNight, setIsNight] = useState<boolean>(true);
   const [isQuizOpen, setIsQuizOpen] = useState(false);
@@ -241,6 +258,38 @@ export default function Home() {
       const savedPalette = localStorage.getItem('userPalette');
       if (savedPalette) setUserPalette(savedPalette);
     } catch (e) {}
+
+    // Controle do período de testes de 24h e pagamento
+    try {
+      const isPaid = localStorage.getItem('make_app_paid') === 'true';
+      if (!isPaid) {
+        const firstOpen = localStorage.getItem('make_first_open_time');
+        if (!firstOpen) {
+          localStorage.setItem('make_first_open_time', Date.now().toString());
+        } else {
+          const firstOpenTime = parseInt(firstOpen);
+          const timeElapsed = Date.now() - firstOpenTime;
+          const twentyFourHours = 24 * 60 * 60 * 1000;
+          if (timeElapsed > twentyFourHours) {
+            setIsTrialBlocked(true);
+          }
+        }
+      }
+    } catch (e) {}
+
+    // Registra listener para deep link do Capacitor (se estiver rodando no celular)
+    if (typeof window !== "undefined") {
+      try {
+        const { App } = require("@capacitor/app");
+        App.addListener('appUrlOpen', (event: any) => {
+          if (event.url && event.url.includes('success')) {
+            localStorage.setItem('make_app_paid', 'true');
+            setIsTrialBlocked(false);
+            window.location.reload();
+          }
+        });
+      } catch (e) {}
+    }
 
     // Set Day/Night mode
     const hour = new Date().getHours();
@@ -413,6 +462,90 @@ export default function Home() {
 
   if (!hasEntered) {
     return <WelcomeScreen onEnter={() => setHasEntered(true)} />;
+  }
+
+  if (isTrialBlocked) {
+    return (
+      <div className="min-h-screen bg-stone-950 text-white flex flex-col justify-center items-center px-6 py-12 relative overflow-hidden">
+        {/* Background gradient effects */}
+        <div className="absolute top-[-20%] left-[-20%] w-[60%] aspect-square rounded-full bg-rose-500/10 blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-[-20%] right-[-20%] w-[60%] aspect-square rounded-full bg-pink-500/10 blur-[120px] pointer-events-none" />
+
+        <div className="relative z-10 w-full max-w-md bg-stone-900/80 backdrop-blur-md border border-stone-850 rounded-3xl p-8 shadow-[0_8px_32px_rgba(0,0,0,0.5)] flex flex-col items-center text-center">
+          <div className="w-16 h-16 bg-gradient-to-tr from-rose-500 to-pink-500 rounded-full flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(244,63,94,0.4)]">
+            <Sparkles className="w-8 h-8 text-white animate-pulse" />
+          </div>
+
+          <h2 className="font-serif text-3xl font-bold tracking-tight mb-2 uppercase" style={{ textShadow: "0 0 10px rgba(244, 63, 94, 0.4)" }}>
+            Acesso Expirado
+          </h2>
+          <p className="text-stone-400 text-sm mb-8">
+            Seu período de teste de 24 horas terminou. Desbloqueie o acesso completo para continuar recebendo seu guia diário de beleza e estilo.
+          </p>
+
+          {/* Benefits List */}
+          <div className="w-full text-left space-y-4 mb-8">
+            <div className="flex items-start gap-3">
+              <div className="w-5 h-5 rounded-full bg-rose-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                <span className="text-rose-500 text-xs font-bold">✓</span>
+              </div>
+              <p className="text-stone-300 text-xs leading-relaxed">
+                <span className="text-white font-medium">Acesso Vitalício:</span> Pague uma única vez de R$ 7,00 (sem mensalidades).
+              </p>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="w-5 h-5 rounded-full bg-rose-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                <span className="text-rose-500 text-xs font-bold">✓</span>
+              </div>
+              <p className="text-stone-300 text-xs leading-relaxed">
+                <span className="text-white font-medium">Categorias Completas:</span> Skincare, Cabelo, Makes, Tendências, Look do Dia e Astral.
+              </p>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="w-5 h-5 rounded-full bg-rose-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                <span className="text-rose-500 text-xs font-bold">✓</span>
+              </div>
+              <p className="text-stone-300 text-xs leading-relaxed">
+                <span className="text-white font-medium">Audioguias:</span> Instruções narradas por voz para todos os passo a passos.
+              </p>
+            </div>
+          </div>
+
+          {/* Payment Button */}
+          <a
+            href={MERCADO_PAGO_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full bg-gradient-to-r from-rose-500 to-pink-500 text-white font-bold py-4 rounded-2xl shadow-[0_4px_15px_rgba(244,63,94,0.3)] hover:scale-[1.02] active:scale-95 transition-all text-center mb-8 flex items-center justify-center gap-2"
+          >
+            Pagar R$ 7,00 com Mercado Pago
+          </a>
+
+          {/* Activation Code Input */}
+          <div className="w-full border-t border-stone-850 pt-6 flex flex-col items-center">
+            <p className="text-stone-400 text-xs mb-3 font-medium">Já realizou o pagamento?</p>
+            <div className="flex w-full gap-2">
+              <input
+                type="text"
+                placeholder="Código de ativação"
+                value={activationCode}
+                onChange={(e) => setActivationCode(e.target.value)}
+                className="flex-1 bg-stone-850 border border-stone-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500 transition-colors uppercase tracking-wider text-center"
+              />
+              <button
+                onClick={handleUnlockCode}
+                className="bg-stone-800 hover:bg-stone-700 active:scale-95 text-stone-200 font-bold px-4 py-2.5 rounded-xl text-xs uppercase transition-all whitespace-nowrap"
+              >
+                Liberar
+              </button>
+            </div>
+            {activationError && (
+              <p className="text-rose-500 text-xs mt-2 font-medium">{activationError}</p>
+            )}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const activeData: any = activeDataList?.[activeDayIdx] || null;
